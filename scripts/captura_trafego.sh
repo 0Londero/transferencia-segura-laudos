@@ -10,11 +10,12 @@
 # (na de TLS, use "Decode As... TCP 5050 -> TLS" para ver o handshake).
 #
 # Uso: sudo bash scripts/captura_trafego.sh | tee docs/evidencias/09_captura_trafego.txt
+#      sudo SAIDA=/tmp/captura bash scripts/captura_trafego.sh   (sem tocar nas evidências)
 
 set -uo pipefail
 [ "$(id -u)" -eq 0 ] || { echo "execute com sudo"; exit 1; }
 cd "$(dirname "$0")/.."
-SAIDA=docs/evidencias/capturas
+SAIDA="${SAIDA:-docs/evidencias/capturas}"
 TMP="$(mktemp -d)"
 mkdir -p "$SAIDA"
 LAUDO="laudo-exemplo-$(date +%H%M%S).txt"

@@ -67,6 +67,8 @@ com `ip -br addr show eth0`.
 | `scripts/teste_conteineres.sh` | testes T15 a T18 na topologia com contêineres |
 | `scripts/falha_provocada.sh` | T19: o serviço cai no meio de um envio e volta |
 | `scripts/captura_trafego.sh` | captura com `tcpdump`, sem e com TLS |
+| `scripts/demo_tres_unidades.sh` | demonstração: as 3 unidades enviando ao mesmo tempo |
+| `scripts/monitorar.sh` | monitor ao vivo: conexões (`ss`), threads e memória (`ps`) |
 | `testes/teste_sistema.py` | testes automatizados T01 a T14 |
 | `Dockerfile`, `docker-compose.yml` | imagem e rede das unidades |
 | `docs/evidencias/` | saídas reais dos testes, capturas `.pcap` e imagem do painel |

@@ -7,7 +7,7 @@ do vídeo pronto e dúvidas finais.
 |---|---|
 | Solução completa | Feita: servidor como serviço do systemd com TLS, painel HTTP, download, firewall e 3 unidades em contêineres |
 | Testes | 19 casos executados e aprovados (T01 a T19), evidências em [evidencias/](evidencias/) |
-| Roteiro do vídeo | Próxima etapa |
+| Roteiro do vídeo | Pronto: 9:30 em 8 blocos, 3:10 de fala para cada integrante |
 | Repositório | https://github.com/0Londero/transferencia-segura-laudos |
 
 ## 1. O que mudou desde o Checkpoint 1
@@ -40,8 +40,8 @@ do vídeo pronto e dúvidas finais.
 
 ## 3. Pendências até a entrega (25/11)
 
-1. Roteiro e gravação do vídeo (até 10 min, todos em câmera, demonstração ao vivo).
-2. Link do vídeo e matrículas no documento-resumo; contribuição de cada integrante.
+1. Gravação do vídeo (até 10 min, todos em câmera, demonstração ao vivo), seguindo o roteiro.
+2. Link do vídeo no documento-resumo e revisão da declaração de uso de IA.
 3. Conferir os links do vídeo e do repositório numa janela anônima.
 4. Enviar no Canvas o PDF e o link do vídeo no campo de texto.
 
