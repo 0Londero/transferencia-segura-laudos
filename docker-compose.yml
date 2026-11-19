@@ -1,0 +1,76 @@
+# Unidades da clínica: 3 contêineres na rede bridge "rede_clinica", com IPs
+# fixos (ver README). O servidor NÃO é um contêiner: é o próprio Linux do
+# host (serviço laudos do systemd), alcançado pelo gateway da rede, 172.28.0.1.
+#
+#   sudo bash scripts/instalar_servidor.sh     # antes: gera certs/ca.crt
+#   docker compose up -d --build
+#   docker compose exec centro python src/cliente.py ping
+#   bash scripts/teste_conteineres.sh
+#
+# Dentro dos contêineres, "servidor" aponta para 172.28.0.1 (extra_hosts) e o
+# nome das outras unidades é resolvido pelo DNS interno do Docker (127.0.0.11).
+name: laudos
+
+x-ambiente: &ambiente
+  LTP_SERVIDOR: servidor
+  LTP_TLS_CA: /app/certs/ca.crt        # só o certificado público da CA da clínica
+  LTP_PASTA: /home/laudos/recebidos
+
+x-unidade: &unidade
+  build:
+    context: .
+    # O build usa a rede do host: no WSL, o DNS fica em 10.255.255.254, um
+    # endereço da interface lo do host, que os contêineres não alcançam
+    network: host
+  image: laudos-unidade
+  init: true                           # repassa sinais e recolhe processos órfãos
+  restart: unless-stopped
+  extra_hosts:
+    - "servidor:172.28.0.1"            # o host Linux, gateway da rede_clinica
+  volumes:
+    - ./certs/ca.crt:/app/certs/ca.crt:ro
+    - /etc/localtime:/etc/localtime:ro  # mesmo fuso do host nos logs
+
+services:
+  centro:
+    <<: *unidade
+    hostname: centro
+    environment:
+      <<: *ambiente
+      LTP_UNIDADE: centro
+      LTP_TOKEN: token-centro-2026     # token de laboratório, trocar em produção
+    networks:
+      rede_clinica:
+        ipv4_address: 172.28.0.21
+
+  batel:
+    <<: *unidade
+    hostname: batel
+    environment:
+      <<: *ambiente
+      LTP_UNIDADE: batel
+      LTP_TOKEN: token-batel-2026
+    networks:
+      rede_clinica:
+        ipv4_address: 172.28.0.22
+
+  agua-verde:
+    <<: *unidade
+    hostname: agua-verde
+    environment:
+      <<: *ambiente
+      LTP_UNIDADE: agua-verde
+      LTP_TOKEN: token-agua-verde-2026
+    networks:
+      rede_clinica:
+        ipv4_address: 172.28.0.23
+
+networks:
+  rede_clinica:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-clinica   # nome da interface no host (ip, tcpdump)
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+          gateway: 172.28.0.1

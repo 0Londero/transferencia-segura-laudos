@@ -1,0 +1,49 @@
+$ sudo bash scripts/instalar_servidor.sh
+
+== 1. usuário de serviço
+uid=997(laudos) gid=985(laudos) groups=985(laudos)
+laudos:x:997:985::/srv/laudos:/usr/sbin/nologin
+== 2. código em /opt/laudos
+== 3. configuração e certificados em /etc/laudos
+-----
+CA criada: /etc/laudos/tls/ca.crt
+-----
+Certificate request self-signature ok
+subject=O=Clinica PSI129A (laboratorio), CN=servidor
+subject=O=Clinica PSI129A (laboratorio), CN=servidor
+issuer=O=Clinica PSI129A (laboratorio), CN=CA da clinica
+notBefore=Nov 19 12:26:55 2026 GMT
+notAfter=Dec 21 12:26:55 2027 GMT
+X509v3 Subject Alternative Name: 
+    DNS:servidor, DNS:localhost, IP Address:127.0.0.1, IP Address:172.28.0.1
+== 4. pasta dos laudos
+== 5. serviço do systemd
+Created symlink '/etc/systemd/system/multi-user.target.wants/laudos.service' → '/etc/systemd/system/laudos.service'.
+● laudos.service - Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP)
+     Loaded: loaded (/etc/systemd/system/laudos.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-11-19 09:26:55 -03; 2s ago
+ Invocation: 71c2fb158edd44e6a91a5d6704893c3d
+       Docs: https://github.com/0Londero/transferencia-segura-laudos
+   Main PID: 2005 (python3)
+      Tasks: 2 (limit: 64)
+     Memory: 15.3M (max: 512M, available: 496.6M, peak: 15.3M)
+        CPU: 88ms
+     CGroup: /system.slice/laudos.service
+             └─2005 /usr/bin/python3 /opt/laudos/src/servidor.py --dados /srv/laudos --unidades /etc/laudos/unidades.json --log /var/log/laudos/servidor.log --tls-cert /etc/laudos/tls/servidor.crt --tls-chave /etc/laudos/tls/servidor.key
+
+== 6. permissões resultantes
+drwxr-x--- 3 root   laudos 4096 Nov 19 09:26 /etc/laudos
+drwxr-x--- 2 root   laudos 4096 Nov 19 09:26 /etc/laudos/tls
+drwxr-xr-x 2 root   root   4096 Nov 19 09:26 /opt/laudos/src
+drwxr-x--- 5 laudos laudos 4096 Nov 19 09:26 /srv/laudos
+/etc/laudos:
+total 8
+drwxr-x--- 2 root laudos 4096 Nov 19 09:26 tls
+-rw-r----- 1 root laudos  538 Nov 19 09:26 unidades.json
+
+/etc/laudos/tls:
+total 16
+-rw-r--r-- 1 root laudos 721 Nov 19 09:26 ca.crt
+-rw------- 1 root laudos 241 Nov 19 09:26 ca.key
+-rw-r--r-- 1 root laudos 798 Nov 19 09:26 servidor.crt
+-rw-r----- 1 root laudos 241 Nov 19 09:26 servidor.key

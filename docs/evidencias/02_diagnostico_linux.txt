@@ -1,0 +1,91 @@
+$ bash scripts/diagnostico.sh 172.19.112.1 ~/laudos   (com 3 clientes conectados)
+
+===== Host e sistema =====
+2026-11-08 22:29:17
+Londero-Rz16
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+6.18.33.2-microsoft-standard-WSL2
+
+===== Interfaces (ip -br addr) =====
+lo               UNKNOWN        127.0.0.1/8 10.255.255.254/32 ::1/128 
+eth0             UP             172.19.114.51/20 fe80::215:5dff:feae:735f/64 
+
+===== Rotas (ip route) =====
+default via 172.19.112.1 dev eth0 proto kernel 
+172.19.112.0/20 dev eth0 proto kernel scope link src 172.19.114.51 
+
+===== Serviço escutando na porta 5050 (ss -tlnp) =====
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                         
+LISTEN 0      64           0.0.0.0:5050      0.0.0.0:*    users:(("python3",pid=10,fd=4))
+
+===== Conexões TCP na porta 5050 (ss -tn) =====
+State Recv-Q Send-Q Local Address:Port Peer Address:Port 
+ESTAB 0      0      172.19.114.51:5050 172.19.112.1:65246
+ESTAB 0      0      172.19.114.51:5050 172.19.112.1:65245
+ESTAB 0      0      172.19.114.51:5050 172.19.112.1:65247
+
+===== Processo do servidor: PID, usuário, CPU, memória, threads (ps) =====
+    PID USER     %CPU %MEM   RSS NLWP     ELAPSED COMMAND
+     10 otavio    0.7  0.1 23976    4       00:54 python3 src/servidor.py --host 0.0.0.0 --porta 5050 --dados /home/otavio/laudos
+
+===== Alcance do cliente 172.19.112.1 (ping) =====
+PING 172.19.112.1 (172.19.112.1) 56(84) bytes of data.
+
+--- 172.19.112.1 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2036ms
+
+sem resposta ao ping (o firewall do Windows bloqueia ICMP por padrão)
+
+===== Permissões da pasta de laudos (/home/otavio/laudos) =====
+total 20
+drwxr-x--- 5 otavio otavio 4096 Nov  8 22:28 .
+drwxr-x--- 5 otavio otavio 4096 Nov  8 22:28 ..
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 agua-verde
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 batel
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 centro
+
+/home/otavio/laudos/agua-verde/.parciais:
+total 8
+drwxr-x--- 2 otavio otavio 4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 ..
+
+/home/otavio/laudos/agua-verde/entrada:
+total 20492
+drwxr-x--- 2 otavio otavio     4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio     4096 Nov  8 22:28 ..
+-rw-r----- 1 otavio otavio 20971520 Nov  8 22:28 laudo-batel-20261108-222827.bin
+-rw-r----- 1 otavio otavio       98 Nov  8 22:28 laudo-batel-20261108-222827.bin.sha256
+
+/home/otavio/laudos/batel/.parciais:
+total 8
+drwxr-x--- 2 otavio otavio 4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 ..
+
+/home/otavio/laudos/batel/entrada:
+total 20492
+drwxr-x--- 2 otavio otavio     4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio     4096 Nov  8 22:28 ..
+-rw-r----- 1 otavio otavio 20971520 Nov  8 22:28 laudo-centro-20261108-222827.bin
+-rw-r----- 1 otavio otavio       99 Nov  8 22:28 laudo-centro-20261108-222827.bin.sha256
+
+/home/otavio/laudos/centro/.parciais:
+total 8
+drwxr-x--- 2 otavio otavio 4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio 4096 Nov  8 22:28 ..
+
+/home/otavio/laudos/centro/entrada:
+total 30736
+drwxr-x--- 2 otavio otavio     4096 Nov  8 22:28 .
+drwxr-x--- 4 otavio otavio     4096 Nov  8 22:28 ..
+-rw-r----- 1 otavio otavio 20971520 Nov  8 22:28 laudo-agua-verde-20261108-222827.bin
+-rw-r----- 1 otavio otavio      103 Nov  8 22:28 laudo-agua-verde-20261108-222827.bin.sha256
+-rw-r----- 1 otavio otavio 10485760 Nov  8 22:28 laudo-retomada-20261108-222827.bin
+-rw-r----- 1 otavio otavio      101 Nov  8 22:28 laudo-retomada-20261108-222827.bin.sha256
+
+===== Uso de disco (df -h) =====
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdd       1007G  2.2G  954G   1% /
+
+$ cd ~/laudos/centro/entrada && sha256sum -c *.sha256
+laudo-agua-verde-20261108-222827.bin: OK
+laudo-retomada-20261108-222827.bin: OK

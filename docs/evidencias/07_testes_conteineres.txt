@@ -1,0 +1,107 @@
+$ sudo bash scripts/teste_conteineres.sh
+
+===== Contêineres e rede (docker compose ps, docker network inspect) =====
+NAME                  STATUS
+laudos-agua-verde-1   Up Less than a second
+laudos-batel-1        Up Less than a second
+laudos-centro-1       Up Less than a second
+rede 172.28.0.0/24, gateway 172.28.0.1
+laudos-centro-1 172.28.0.21/24
+laudos-agua-verde-1 172.28.0.23/24
+laudos-batel-1 172.28.0.22/24
+
+br-clinica       UP             172.28.0.1/24 fe80::608e:cdff:fe9c:9f26/64 
+
+===== T15: visão de rede da unidade centro =====
+centro
+eth0@if28        UP             172.28.0.21/24 
+default via 172.28.0.1 dev eth0 
+172.28.0.0/24 dev eth0 proto kernel scope link src 172.28.0.21 
+172.28.0.1	servidor
+--- nomes das outras unidades pelo DNS interno do Docker (127.0.0.11)
+batel -> 172.28.0.22
+agua-verde -> 172.28.0.23
+--- ping até o servidor
+PING servidor (172.28.0.1) 56(84) bytes of data.
+64 bytes from servidor (172.28.0.1): icmp_seq=1 ttl=64 time=0.102 ms
+64 bytes from servidor (172.28.0.1): icmp_seq=2 ttl=64 time=0.102 ms
+64 bytes from servidor (172.28.0.1): icmp_seq=3 ttl=64 time=0.081 ms
+
+--- servidor ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2036ms
+rtt min/avg/max/mdev = 0.081/0.095/0.102/0.009 ms
+--- caminho até a internet: unidade -> host Linux (172.28.0.1) -> Windows (NAT do WSL)
+traceroute to 8.8.8.8 (8.8.8.8), 3 hops max, 60 byte packets
+ 1  172.28.0.1  0.126 ms
+ 2  172.19.112.1  0.393 ms
+ 3  192.168.32.1  2.575 ms
+--- PING do LTP/1 com TLS
+2026-11-19 09:42:50,300 INFO    conectado a servidor:5050 (porta local 172.28.0.21:51228, TLSv1.3)
+PONG de Londero-Rz16 (LTP/1, com TLS) em 0.3 ms, hora do servidor 2026-11-19 09:42:50
+
+===== T16: 3 unidades enviando 20 MB ao mesmo tempo (link limitado a 4 MB/s) =====
+--- no host, durante os envios: conexões na porta 5050 (ss -tn)
+Recv-Q Send-Q Local Address:Port Peer Address:Port 
+0      0         172.28.0.1:5050  172.28.0.21:47308
+0      0         172.28.0.1:5050  172.28.0.22:36962
+0      0         172.28.0.1:5050  172.28.0.23:38510
+--- processo do servidor: threads (NLWP), memória (RSS, KB) e CPU (ps)
+    PID USER     NLWP   RSS %CPU     ELAPSED CMD
+   5657 laudos      5 30104  1.3       00:14 /usr/bin/python3 /opt/laudos/src/servidor.py --dados /srv/laudos --unidades /etc/laudos/unidades.json --log /var/log/laudos/servidor.log --tls-cert /etc/laudos/tls/servidor.crt --tls-chave /etc/laudos/tls/servidor.key
+--- métricas do painel HTTP no mesmo instante
+conexoes_ativas: 3 | threads: 6 | RAM: 29 MB
+--- saída do cliente centro
+2026-11-19 09:42:52,665 INFO    laudo laudo-centro-094244.pdf: 20971520 bytes, SHA-256 7fe52c59463b29c41bd35eb4271d802e17ee7a3f27b06d9abc2a926698131baf
+2026-11-19 09:42:52,675 INFO    conectado a servidor:5050 (porta local 172.28.0.21:47308, TLSv1.3)
+2026-11-19 09:42:53,911 INFO    enviados 25% (5242880 de 20971520 bytes desta conexão)
+2026-11-19 09:42:55,161 INFO    enviados 50% (10485760 de 20971520 bytes desta conexão)
+2026-11-19 09:42:56,411 INFO    enviados 75% (15728640 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,661 INFO    enviados 100% (20971520 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,679 INFO    servidor confirmou laudo-centro-094244.pdf (SHA-256 conferido)
+RECEBIDO: laudo-centro-094244.pdf sha256=7fe52c59463b29c41bd35eb4271d802e17ee7a3f27b06d9abc2a926698131baf
+--- saída do cliente batel
+2026-11-19 09:42:52,663 INFO    laudo laudo-batel-094244.pdf: 20971520 bytes, SHA-256 84d2f553ff8f4fd841b494e33f1eea29f5081848388b802c350c9cba906f2ca7
+2026-11-19 09:42:52,675 INFO    conectado a servidor:5050 (porta local 172.28.0.22:36962, TLSv1.3)
+2026-11-19 09:42:53,911 INFO    enviados 25% (5242880 de 20971520 bytes desta conexão)
+2026-11-19 09:42:55,161 INFO    enviados 50% (10485760 de 20971520 bytes desta conexão)
+2026-11-19 09:42:56,411 INFO    enviados 75% (15728640 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,661 INFO    enviados 100% (20971520 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,681 INFO    servidor confirmou laudo-batel-094244.pdf (SHA-256 conferido)
+RECEBIDO: laudo-batel-094244.pdf sha256=84d2f553ff8f4fd841b494e33f1eea29f5081848388b802c350c9cba906f2ca7
+--- saída do cliente agua-verde
+2026-11-19 09:42:52,648 INFO    laudo laudo-agua-verde-094244.pdf: 20971520 bytes, SHA-256 37af0618fc8f1b0166a73b030c5989c842667442143a8eba95aa3a506d482c7f
+2026-11-19 09:42:52,660 INFO    conectado a servidor:5050 (porta local 172.28.0.23:38510, TLSv1.3)
+2026-11-19 09:42:53,896 INFO    enviados 25% (5242880 de 20971520 bytes desta conexão)
+2026-11-19 09:42:55,146 INFO    enviados 50% (10485760 de 20971520 bytes desta conexão)
+2026-11-19 09:42:56,396 INFO    enviados 75% (15728640 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,646 INFO    enviados 100% (20971520 de 20971520 bytes desta conexão)
+2026-11-19 09:42:57,662 INFO    servidor confirmou laudo-agua-verde-094244.pdf (SHA-256 conferido)
+RECEBIDO: laudo-agua-verde-094244.pdf sha256=37af0618fc8f1b0166a73b030c5989c842667442143a8eba95aa3a506d482c7f
+tempo total: 5.7 s (cada envio sozinho levaria 5 s a 4 MB/s)
+
+===== T17: firewall visto da unidade =====
+5050/TCP (LTP/1): aberta
+8080/TCP (painel HTTP, só para a TI): sem resposta em 3 s (bloqueada pelo ufw)
+--- registro do bloqueio no log do kernel (journalctl -k)
+Nov 19 09:42:59 Londero-Rz16 kernel: [UFW BLOCK] IN=br-clinica OUT= PHYSIN=vetha445e47 MAC=62:8e:cd:9c:9f:26:4a:fd:b7:12:f9:99:08:00 SRC=172.28.0.21 DST=172.28.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=18969 DF PROTO=TCP SPT=56908 DPT=8080 WINDOW=64240 RES=0x00 SYN URGP=0 
+Nov 19 09:43:00 Londero-Rz16 kernel: [UFW BLOCK] IN=br-clinica OUT= PHYSIN=vetha445e47 MAC=62:8e:cd:9c:9f:26:4a:fd:b7:12:f9:99:08:00 SRC=172.28.0.21 DST=172.28.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=18970 DF PROTO=TCP SPT=56908 DPT=8080 WINDOW=64240 RES=0x00 SYN URGP=0 
+
+===== T18: batel baixa o laudo enviado por centro e confere o SHA-256 =====
+2026-11-19 09:43:02,450 INFO    conectado a servidor:5050 (porta local 172.28.0.22:42066, TLSv1.3)
+10 laudo(s) na entrada de batel:
+  carga-00-20261119-093619.bin                  4194304 B  b0182f313707fde58225a7e4d569908eb31ae8127f592e2437a1d8f8b1fb6a13
+  carga-03-20261119-093619.bin                  4194304 B  20425cc7b6600591908b1faeb13955681b5632b9c9d2de376782da8cc393c9f8
+  carga-06-20261119-093619.bin                  4194304 B  288c5b246001b11836a4a8afe8bdecce7f98ebdccf53dbfb3aff9515686f2639
+  carga-09-20261119-093619.bin                  4194304 B  c1506f7464450e490786cabc3530d5832a64df1d8ca181b18337cc56e8a62341
+  carga-12-20261119-093619.bin                  4194304 B  70a84d07fa2f7ad332ac4e645f7ec8a0915b5abc5faa4944af464ae3efc0f8c6
+  laudo-centro-093540.pdf                      20971520 B  9e69f04461c6e152d6d244bf06a860904d03e0cd8e77e3e27c145fc2495419ef
+  laudo-centro-094244.pdf                      20971520 B  7fe52c59463b29c41bd35eb4271d802e17ee7a3f27b06d9abc2a926698131baf
+  laudo-centro-20261119-093619.bin             20971520 B  8c03e8d621398f2c7f3bfacd31c43a472ec0eb955af2dd03b2a63aac3b62cdad
+  laudo-exemplo-093756.txt                          117 B  375923cbcf2e61b04446947091cdb6e09f85f43f9027340c717da40cfb8020a5
+  laudo-exemplo-093818.txt                          119 B  8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d
+2026-11-19 09:43:03,057 INFO    conectado a servidor:5050 (porta local 172.28.0.22:42070, TLSv1.3)
+2026-11-19 09:43:03,109 INFO    laudo-centro-094244.pdf baixado e conferido (SHA-256 7fe52c59463b29c41bd35eb4271d802e17ee7a3f27b06d9abc2a926698131baf)
+BAIXADO: /home/laudos/recebidos/laudo-centro-094244.pdf (20971520 bytes) sha256=7fe52c59463b29c41bd35eb4271d802e17ee7a3f27b06d9abc2a926698131baf conferido
+laudo-centro-094244.pdf: OK
+--- o mesmo hash conferido no servidor (sha256sum -c na pasta do serviço)
+laudo-centro-094244.pdf: OK

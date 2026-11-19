@@ -1,0 +1,12 @@
+# Dados e logs gerados em execução (as evidências ficam em docs/evidencias)
+dados/
+logs/
+recebidos/
+*.part
+
+# Certificados: gerados em cada instalação pelo scripts/instalar_servidor.sh
+certs/
+
+# Python
+__pycache__/
+*.pyc

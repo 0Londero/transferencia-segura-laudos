@@ -1,0 +1,52 @@
+# Serviço da central de laudos: servidor LTP/1 (5050/TCP, com TLS) e painel
+# HTTP (8080/TCP). Instalado por scripts/instalar_servidor.sh em
+# /etc/systemd/system/laudos.service.
+#
+#   sudo systemctl status laudos      estado, PID, memória e últimas linhas do log
+#   sudo systemctl restart laudos     reinicia (os envios em andamento são retomados)
+#   journalctl -u laudos -f           log ao vivo (usuário no grupo adm ou laudos)
+
+[Unit]
+Description=Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP)
+Documentation=https://github.com/0Londero/transferencia-segura-laudos
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=laudos
+Group=laudos
+UMask=0027
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /opt/laudos/src/servidor.py \
+    --dados /srv/laudos \
+    --unidades /etc/laudos/unidades.json \
+    --log /var/log/laudos/servidor.log \
+    --tls-cert /etc/laudos/tls/servidor.crt \
+    --tls-chave /etc/laudos/tls/servidor.key
+# Se o processo morrer por erro, o systemd sobe de novo em 3 s
+Restart=on-failure
+RestartSec=3
+
+# Mínimo privilégio: sem nenhuma capacidade de root, sistema de arquivos
+# somente leitura, exceto a pasta dos laudos e a de logs
+LogsDirectory=laudos
+ReadWritePaths=/srv/laudos
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+LockPersonality=yes
+# Limites de recursos: no máximo 512 MB de RAM e 64 threads
+MemoryMax=512M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

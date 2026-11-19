@@ -1,0 +1,5 @@
+# Quebra de linha LF em todos os arquivos de texto, também em clones no Windows:
+# os scripts .sh e a unidade do systemd rodam no Linux (WSL), onde CRLF quebra o bash.
+* text=auto eol=lf
+*.png  binary
+*.pcap binary

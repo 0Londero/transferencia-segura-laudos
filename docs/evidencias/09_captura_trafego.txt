@@ -1,0 +1,56 @@
+$ sudo bash scripts/captura_trafego.sh
+
+===== 1. Sem TLS (instância temporária em 127.0.0.1:5051, captura em lo) =====
+2026-11-19 09:38:20,053 INFO    laudo laudo-exemplo-093818.txt: 119 bytes, SHA-256 8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d
+2026-11-19 09:38:20,055 INFO    conectado a 127.0.0.1:5051 (porta local 127.0.0.1:42790)
+2026-11-19 09:38:20,059 INFO    servidor confirmou laudo-exemplo-093818.txt (SHA-256 conferido)
+RECEBIDO: laudo-exemplo-093818.txt sha256=8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d
+--- pacotes capturados (tcpdump -nn -r, primeiras linhas)
+09:38:20.055677 IP 127.0.0.1.42790 > 127.0.0.1.5051: Flags [S], seq 3799611645, win 65495, options [mss 65495,sackOK,TS val 1154411574 ecr 0,nop,wscale 10], length 0
+09:38:20.055695 IP 127.0.0.1.5051 > 127.0.0.1.42790: Flags [S.], seq 3542827715, ack 3799611646, win 65483, options [mss 65495,sackOK,TS val 3137797007 ecr 1154411574,nop,wscale 10], length 0
+09:38:20.055707 IP 127.0.0.1.42790 > 127.0.0.1.5051: Flags [.], ack 1, win 64, options [nop,nop,TS val 1154411574 ecr 3137797007], length 0
+09:38:20.056587 IP 127.0.0.1.42790 > 127.0.0.1.5051: Flags [P.], seq 1:71, ack 1, win 64, options [nop,nop,TS val 1154411575 ecr 3137797007], length 70
+09:38:20.056624 IP 127.0.0.1.5051 > 127.0.0.1.42790: Flags [.], ack 71, win 64, options [nop,nop,TS val 3137797008 ecr 1154411575], length 0
+09:38:20.056902 IP 127.0.0.1.5051 > 127.0.0.1.42790: Flags [P.], seq 1:64, ack 71, win 64, options [nop,nop,TS val 3137797008 ecr 1154411575], length 63
+09:38:20.056944 IP 127.0.0.1.42790 > 127.0.0.1.5051: Flags [.], ack 64, win 64, options [nop,nop,TS val 1154411575 ecr 3137797008], length 0
+09:38:20.057009 IP 127.0.0.1.42790 > 127.0.0.1.5051: Flags [P.], seq 71:242, ack 64, win 64, options [nop,nop,TS val 1154411575 ecr 3137797008], length 171
+--- o que qualquer um na rede consegue ler (tcpdump -A, só texto)
+{"cmd": "AUTH", "unidade": "centro", "token": "token-centro-2026"}
+{"cmd": "UPLOAD", "nome": "laudo-exemplo-093818.txt", "destino": "batel", "tamanho": 119, "sha256": "8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d"}
+Paciente: Maria Exemplo
+Exame: tomografia computadorizada
+{"cmd": "QUIT"}
+
+===== 2. Com TLS (serviço real em 5050, captura em br-clinica) =====
+2026-11-19 09:38:24,843 INFO    laudo laudo-exemplo-093818.txt: 119 bytes, SHA-256 8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d
+2026-11-19 09:38:24,853 INFO    conectado a servidor:5050 (porta local 172.28.0.21:42282, TLSv1.3)
+2026-11-19 09:38:24,855 INFO    servidor confirmou laudo-exemplo-093818.txt (SHA-256 conferido)
+RECEBIDO: laudo-exemplo-093818.txt sha256=8c03290dadd7a2c744d464396b6ac19151ad081a4f9636d989111b5744958c0d
+--- pacotes capturados (tcpdump -nn -r, primeiras linhas)
+09:38:24.851331 IP 172.28.0.21.42282 > 172.28.0.1.5050: Flags [S], seq 1943746039, win 64240, options [mss 1460,sackOK,TS val 4231431509 ecr 0,nop,wscale 10], length 0
+09:38:24.851355 IP 172.28.0.1.5050 > 172.28.0.21.42282: Flags [S.], seq 752559528, ack 1943746040, win 65160, options [mss 1460,sackOK,TS val 4252428880 ecr 4231431509,nop,wscale 10], length 0
+09:38:24.851370 IP 172.28.0.21.42282 > 172.28.0.1.5050: Flags [.], ack 1, win 63, options [nop,nop,TS val 4231431509 ecr 4252428880], length 0
+09:38:24.851819 IP 172.28.0.21.42282 > 172.28.0.1.5050: Flags [P.], seq 1:1525, ack 1, win 63, options [nop,nop,TS val 4231431509 ecr 4252428880], length 1524
+09:38:24.851829 IP 172.28.0.1.5050 > 172.28.0.21.42282: Flags [.], ack 1525, win 67, options [nop,nop,TS val 4252428880 ecr 4231431509], length 0
+09:38:24.852908 IP 172.28.0.1.5050 > 172.28.0.21.42282: Flags [P.], seq 1:2007, ack 1525, win 67, options [nop,nop,TS val 4252428881 ecr 4231431509], length 2006
+09:38:24.852948 IP 172.28.0.21.42282 > 172.28.0.1.5050: Flags [.], ack 2007, win 67, options [nop,nop,TS val 4231431510 ecr 4252428881], length 0
+09:38:24.853662 IP 172.28.0.21.42282 > 172.28.0.1.5050: Flags [P.], seq 1525:1605, ack 2007, win 67, options [nop,nop,TS val 4231431511 ecr 4252428881], length 80
+--- procurando o token e o nome da paciente no tráfego cifrado
+"token-centro": 0 ocorrência(s)
+"Paciente": 0 ocorrência(s)
+"cmd": 0 ocorrência(s)
+
+===== 3. A captura com TLS aberta no Wireshark (tshark, Decode As TCP 5050 -> TLS) =====
+> tshark -r ltp_com_tls.pcap -d tcp.port==5050,tls -Y tls
+4 | 172.28.0.21 | 172.28.0.1 | TLSv1.2 | Client Hello (SNI=servidor)
+6 | 172.28.0.1 | 172.28.0.21 | TLSv1.3 | Server Hello, Change Cipher Spec, Application Data, Application Data, Application Data, Application Data
+8 | 172.28.0.21 | 172.28.0.1 | TLSv1.3 | Change Cipher Spec, Application Data
+9 | 172.28.0.1 | 172.28.0.21 | TLSv1.3 | Application Data
+10 | 172.28.0.1 | 172.28.0.21 | TLSv1.3 | Application Data
+11 | 172.28.0.21 | 172.28.0.1 | TLSv1.3 | Application Data
+12 | 172.28.0.1 | 172.28.0.21 | TLSv1.3 | Application Data
+13 | 172.28.0.21 | 172.28.0.1 | TLSv1.3 | Application Data
+--- versão, suíte de cifras e grupo de troca de chaves escolhidos pelo servidor (Server Hello)
+Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+Key Share Entry: Group: X25519MLKEM768, Key Exchange length: 1120
+Supported Version: TLS 1.3 (0x0304)

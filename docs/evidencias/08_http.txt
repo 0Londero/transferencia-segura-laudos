@@ -1,0 +1,136 @@
+> curl -i http://172.19.114.51:8080/saude      (notebook da TI, Windows)
+HTTP/1.0 200 OK
+Server: CentralLaudos/1.0 
+Date: Thu, 19 Nov 2026 12:43:56 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 104
+Cache-Control: no-store
+
+{
+  "status": "ok",
+  "versao": "LTP/1",
+  "servidor": "Londero-Rz16",
+  "tls": true,
+  "uptime_s": 42
+}
+
+> curl -s http://172.19.114.51:8080/metricas
+{
+  "servidor": "Londero-Rz16",
+  "versao": "LTP/1",
+  "porta": 5050,
+  "tls": true,
+  "limite_clientes": 20,
+  "uptime_s": 42,
+  "contadores": {
+    "conexoes_ativas": 0,
+    "conexoes_total": 62,
+    "conexoes_recusadas_lotado": 1,
+    "falhas_tls": 3,
+    "autenticacoes_recusadas": 1,
+    "uploads_ok": 20,
+    "uploads_retomados": 2,
+    "uploads_interrompidos": 1,
+    "uploads_hash_divergente": 1,
+    "bytes_recebidos": 156237824,
+    "downloads_ok": 2,
+    "downloads_interrompidos": 1,
+    "bytes_enviados": 28311552,
+    "requisicoes_http": 8
+  },
+  "processo": {
+    "pid": 7137,
+    "threads": 3,
+    "memoria_rss_kb": 37592,
+    "cpu_s": 1.99,
+    "carga_1min": 0.11
+  },
+  "unidades": {
+    "agua-verde": {
+      "laudos": 14,
+      "bytes": 125829120,
+      "parciais": 0
+    },
+    "batel": {
+      "laudos": 16,
+      "bytes": 125829356,
+      "parciais": 0
+    },
+    "centro": {
+      "laudos": 18,
+      "bytes": 209715200,
+      "parciais": 0
+    }
+  },
+  "disco": {
+    "livre_gb": 1022.4,
+    "total_gb": 1081.1
+  },
+  "eventos": [
+    [
+      "09:43:46",
+      "agua-verde -> centro: carga-11-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "agua-verde -> centro: carga-08-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "agua-verde -> centro: carga-14-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "centro -> batel: carga-03-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "batel -> agua-verde: carga-10-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "centro -> batel: carga-09-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "centro -> batel: carga-12-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "batel -> agua-verde: carga-04-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "batel -> agua-verde: carga-01-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "batel -> agua-verde: carga-07-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "batel -> agua-verde: carga-13-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ],
+    [
+      "09:43:46",
+      "agua-verde -> centro: carga-05-20261119-094328.bin recebido (4.2 MB, SHA-256 ok)"
+    ]
+  ]
+}
+
+> curl -i http://172.19.114.51:8080/nao-existe
+HTTP/1.0 404 Not Found
+Server: CentralLaudos/1.0 
+Date: Thu, 19 Nov 2026 12:43:57 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 89
+Cache-Control: no-store
+
+{
+  "erro": "rota inexistente",
+  "rotas": [
+    "/",
+    "/saude",
+    "/metricas"
+  ]
+}

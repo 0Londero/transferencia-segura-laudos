@@ -1,0 +1,46 @@
+$ sudo bash scripts/falha_provocada.sh
+
+===== 09:43:04 batel envia 30 MB para centro, com o link limitado a 3 MB/s (cerca de 10 s) =====
+2026-11-19 09:43:05,056 INFO    laudo laudo-grande-094303.pdf: 31457280 bytes, SHA-256 ecbedd2fe4f75fc67ce2eb186917a31baeb2ed1a8642a321cf510951ed306e7f
+2026-11-19 09:43:05,065 INFO    conectado a servidor:5050 (porta local 172.28.0.22:42084, TLSv1.3)
+2026-11-19 09:43:07,546 INFO    enviados 25% (7864320 de 31457280 bytes desta conexão)
+
+===== 09:43:08 FALHA PROVOCADA: systemctl stop laudos =====
+2026-11-19 09:43:09,129 WARNING envio interrompido ([Errno 104] Connection reset by peer); tentativa 1/5
+estado do serviço: inactive
+porta 5050 em escuta: 0 socket(s)
+envio parcial guardado no servidor:
+total 12288
+-rw-r----- 1 laudos laudos 12582912 Nov 19 09:43 batel_ecbedd2fe4f75fc67ce2eb186917a31baeb2ed1a8642a321cf510951ed306e7f.part
+2026-11-19 09:43:10,130 WARNING tentativa 1/5 de conectar a servidor:5050 falhou: [Errno 111] Connection refused
+2026-11-19 09:43:11,131 WARNING tentativa 2/5 de conectar a servidor:5050 falhou: [Errno 111] Connection refused
+2026-11-19 09:43:13,131 WARNING tentativa 3/5 de conectar a servidor:5050 falhou: [Errno 111] Connection refused
+
+===== 09:43:15 SOLUÇÃO: systemctl start laudos =====
+estado do serviço: active
+2026-11-19 09:43:17,135 INFO    conectado a servidor:5050 (porta local 172.28.0.22:33240, TLSv1.3)
+2026-11-19 09:43:17,136 INFO    servidor já tem 12582912 bytes, retomando a partir daí
+2026-11-19 09:43:18,616 INFO    enviados 25% (4718592 de 18874368 bytes desta conexão)
+2026-11-19 09:43:20,116 INFO    enviados 50% (9437184 de 18874368 bytes desta conexão)
+2026-11-19 09:43:21,616 INFO    enviados 75% (14155776 de 18874368 bytes desta conexão)
+2026-11-19 09:43:23,116 INFO    enviados 100% (18874368 de 18874368 bytes desta conexão)
+RECEBIDO: laudo-grande-094303.pdf sha256=ecbedd2fe4f75fc67ce2eb186917a31baeb2ed1a8642a321cf510951ed306e7f
+2026-11-19 09:43:23,139 INFO    servidor confirmou laudo-grande-094303.pdf (SHA-256 conferido)
+
+===== 09:43:23 conferência no servidor (sha256sum -c) =====
+laudo-grande-094303.pdf: OK
+
+===== 09:43:23 o mesmo episódio visto pelo journal do serviço (journalctl -u laudos) =====
+2026-11-19T09:43:03-03:00 Londero-Rz16 python3[5657]: INFO    [cli-172.28.0.22:42070] batel: enviando laudo-centro-094244.pdf a partir do byte 0 de 20971520
+2026-11-19T09:43:03-03:00 Londero-Rz16 python3[5657]: INFO    [cli-172.28.0.22:42070] batel: laudo-centro-094244.pdf enviado (20971520 bytes)
+2026-11-19T09:43:05-03:00 Londero-Rz16 python3[5657]: INFO    [cli-172.28.0.22:42084] batel -> centro: recebendo laudo-grande-094303.pdf (31457280 bytes)
+2026-11-19T09:43:08-03:00 Londero-Rz16 systemd[1]: Stopping laudos.service - Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP)...
+2026-11-19T09:43:09-03:00 Londero-Rz16 python3[5657]: INFO    [MainThread] servidor encerrado; conexões interrompidas: 1 (os envios parciais ficam guardados para retomada)
+2026-11-19T09:43:09-03:00 Londero-Rz16 systemd[1]: laudos.service: Deactivated successfully.
+2026-11-19T09:43:09-03:00 Londero-Rz16 systemd[1]: Stopped laudos.service - Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP).
+2026-11-19T09:43:09-03:00 Londero-Rz16 systemd[1]: laudos.service: Consumed 505ms CPU time over 28.867s wall clock time, 91.8M memory peak.
+2026-11-19T09:43:15-03:00 Londero-Rz16 systemd[1]: Started laudos.service - Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP).
+2026-11-19T09:43:15-03:00 Londero-Rz16 python3[7137]: INFO    [MainThread] painel HTTP em http://0.0.0.0:8080/ (rotas /saude e /metricas)
+2026-11-19T09:43:15-03:00 Londero-Rz16 python3[7137]: INFO    [MainThread] LTP/1 escutando em 0.0.0.0:5050/TCP (TLS) | dados em /srv/laudos | unidades: agua-verde, batel, centro
+2026-11-19T09:43:17-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.28.0.22:33240] batel -> centro: retomando laudo-grande-094303.pdf no byte 12582912 de 31457280
+2026-11-19T09:43:23-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.28.0.22:33240] batel -> centro: laudo-grande-094303.pdf gravado, SHA-256 confere (31457280 bytes, 3.2 MB/s)

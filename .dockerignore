@@ -1,0 +1,10 @@
+dados/
+logs/
+docs/
+certs/
+deploy/
+recebidos/
+__pycache__/
+*.pdf
+*.pcap
+.git/

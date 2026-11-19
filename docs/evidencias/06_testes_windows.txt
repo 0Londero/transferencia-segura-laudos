@@ -1,0 +1,20 @@
+> python testes/teste_sistema.py --servidor 172.19.114.51 --tls-ca certs/ca.crt
+
+Cliente Londero-Rz16 -> servidor 172.19.114.51:5050, TLS (CA certs/ca.crt)
+
+[OK    ] T01 comunicação (10 PINGs): PONG de Londero-Rz16 (TLS); tempo de resposta médio 1.0 ms (mín. 0.8, máx. 1.3)
+[OK    ] T02 3 unidades enviando 20 MB ao mesmo tempo: total 0.44s (agua-verde 0.32s, batel 0.38s, centro 0.33s); vazão agregada 136 MB/s
+[OK    ] T03 queda no meio do envio e retomada: reconectou e retomou no byte 4194304 de 10485760
+[OK    ] T04 servidor rejeita arquivo com SHA-256 divergente: HASH_DIVERGENTE (calculado 79ffb15c1168d786...)
+[OK    ] T05 token inválido é recusado: AUTH_INVALIDA: unidade ou token incorretos (resposta em 1.0s)
+[OK    ] T06 nome com ../ é recusado: NOME_INVALIDO: '../../etc/passwd'
+[OK    ] T07 servidor fora do ar: erro tratado após reconexões: TimeoutError após 3 tentativas em 12.0s
+[OK    ] T08 unidade de destino baixa o laudo e confere o SHA-256: 20971520 bytes, SHA-256 igual ao do arquivo original
+[OK    ] T09 queda no meio do download e retomada: retomou no byte 3145728 de 10485760; SHA-256 confere
+[OK    ] T10 unidade não acessa a entrada de outra: NAO_ENCONTRADO; o laudo também não aparece no LIST de centro
+[OK    ] T11 HTTP: /saude, /metricas e rota inexistente: /saude 200 em 20.3 ms, /metricas 200 (5 laudos recebidos, 3 threads), /nao-existe 404
+[OK    ] T12 TLS recusa canal inseguro: sem TLS: ConnectionResetError; sem a CA: unable to get local issuer certificate; nome errado: Hostname mismatch, certificate is not valid for 'impostor'.
+[OK    ] T13 limite de 20 conexões simultâneas: 20 conexões abertas; a seguinte foi recusada (SSLEOFError); recusas no /metricas: 0 -> 1
+[OK    ] T14 carga: 15 envios simultâneos de 4 MB: 15/15 concluídos em 0.63s; vazão agregada 96 MB/s; tempo médio por envio 0.58s; servidor com 36 MB de RAM
+
+14 aprovados, 0 falharam, 0 pulados (de 14 testes)

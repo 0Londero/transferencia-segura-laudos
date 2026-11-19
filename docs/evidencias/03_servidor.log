@@ -1,0 +1,57 @@
+2026-11-08 22:28:22,891 INFO    [MainThread] LTP/1 escutando em 0.0.0.0:5050/TCP | dados em /home/otavio/laudos | unidades: agua-verde, batel, centro
+2026-11-08 22:28:27,433 INFO    [cli-172.19.112.1:65222] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:27,434 INFO    [cli-172.19.112.1:65222] conexão encerrada
+2026-11-08 22:28:27,596 INFO    [cli-172.19.112.1:65223] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:27,598 INFO    [cli-172.19.112.1:65223] conexão encerrada
+2026-11-08 22:28:27,659 INFO    [cli-172.19.112.1:65224] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:27,673 INFO    [cli-172.19.112.1:65225] conexão aceita (threads ativas: 2)
+2026-11-08 22:28:27,675 INFO    [cli-172.19.112.1:65225] unidade batel autenticada
+2026-11-08 22:28:27,675 INFO    [cli-172.19.112.1:65224] unidade centro autenticada
+2026-11-08 22:28:27,678 INFO    [cli-172.19.112.1:65225] batel -> agua-verde: recebendo laudo-batel-20261108-222827.bin (20971520 bytes)
+2026-11-08 22:28:27,680 INFO    [cli-172.19.112.1:65224] centro -> batel: recebendo laudo-centro-20261108-222827.bin (20971520 bytes)
+2026-11-08 22:28:27,683 INFO    [cli-172.19.112.1:65226] conexão aceita (threads ativas: 3)
+2026-11-08 22:28:27,707 INFO    [cli-172.19.112.1:65226] unidade agua-verde autenticada
+2026-11-08 22:28:27,711 INFO    [cli-172.19.112.1:65226] agua-verde -> centro: recebendo laudo-agua-verde-20261108-222827.bin (20971520 bytes)
+2026-11-08 22:28:27,861 INFO    [cli-172.19.112.1:65225] batel -> agua-verde: laudo-batel-20261108-222827.bin gravado, SHA-256 confere (20971520 bytes, 131.8 MB/s)
+2026-11-08 22:28:27,864 INFO    [cli-172.19.112.1:65225] conexão encerrada
+2026-11-08 22:28:27,875 INFO    [cli-172.19.112.1:65224] centro -> batel: laudo-centro-20261108-222827.bin gravado, SHA-256 confere (20971520 bytes, 121.0 MB/s)
+2026-11-08 22:28:27,877 INFO    [cli-172.19.112.1:65224] conexão encerrada
+2026-11-08 22:28:27,888 INFO    [cli-172.19.112.1:65226] agua-verde -> centro: laudo-agua-verde-20261108-222827.bin gravado, SHA-256 confere (20971520 bytes, 133.4 MB/s)
+2026-11-08 22:28:27,890 INFO    [cli-172.19.112.1:65226] conexão encerrada
+2026-11-08 22:28:27,920 INFO    [cli-172.19.112.1:65227] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:27,922 INFO    [cli-172.19.112.1:65227] unidade batel autenticada
+2026-11-08 22:28:27,924 INFO    [cli-172.19.112.1:65227] batel -> centro: recebendo laudo-retomada-20261108-222827.bin (10485760 bytes)
+2026-11-08 22:28:27,951 WARNING [cli-172.19.112.1:65227] batel -> centro: envio de laudo-retomada-20261108-222827.bin interrompido com 4194304 de 10485760 bytes; parcial mantido para retomada
+2026-11-08 22:28:27,953 WARNING [cli-172.19.112.1:65227] falha de rede: cliente desconectou no meio do envio
+2026-11-08 22:28:27,954 INFO    [cli-172.19.112.1:65227] conexão encerrada
+2026-11-08 22:28:28,953 INFO    [cli-172.19.112.1:65229] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:28,970 INFO    [cli-172.19.112.1:65229] unidade batel autenticada
+2026-11-08 22:28:28,972 INFO    [cli-172.19.112.1:65229] batel -> centro: retomando laudo-retomada-20261108-222827.bin no byte 4194304 de 10485760
+2026-11-08 22:28:29,015 INFO    [cli-172.19.112.1:65229] batel -> centro: laudo-retomada-20261108-222827.bin gravado, SHA-256 confere (10485760 bytes, 181.0 MB/s)
+2026-11-08 22:28:29,017 INFO    [cli-172.19.112.1:65229] conexão encerrada
+2026-11-08 22:28:29,020 INFO    [cli-172.19.112.1:65230] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:29,021 INFO    [cli-172.19.112.1:65230] unidade centro autenticada
+2026-11-08 22:28:29,022 INFO    [cli-172.19.112.1:65230] centro -> batel: recebendo laudo-corrompido-20261108-222827.bin (1048576 bytes)
+2026-11-08 22:28:29,036 ERROR   [cli-172.19.112.1:65230] centro -> batel: SHA-256 de laudo-corrompido-20261108-222827.bin não confere (esperado c1302f29273f8a79, calculado a70561e94340f61f); arquivo descartado
+2026-11-08 22:28:29,037 INFO    [cli-172.19.112.1:65230] conexão encerrada
+2026-11-08 22:28:29,038 INFO    [cli-172.19.112.1:65231] conexão aceita (threads ativas: 2)
+2026-11-08 22:28:29,039 WARNING [cli-172.19.112.1:65231] autenticação recusada (unidade='centro')
+2026-11-08 22:28:30,041 INFO    [cli-172.19.112.1:65231] conexão encerrada
+2026-11-08 22:28:30,041 INFO    [cli-172.19.112.1:65232] conexão aceita (threads ativas: 2)
+2026-11-08 22:28:30,043 INFO    [cli-172.19.112.1:65232] unidade centro autenticada
+2026-11-08 22:28:30,044 INFO    [cli-172.19.112.1:65232] conexão encerrada
+2026-11-08 22:28:39,398 INFO    [cli-172.19.112.1:65237] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:39,419 INFO    [cli-172.19.112.1:65237] unidade centro autenticada
+2026-11-08 22:28:39,423 INFO    [cli-172.19.112.1:65237] conexão encerrada
+2026-11-08 22:28:48,585 INFO    [cli-172.19.112.1:65242] conexão aceita (threads ativas: 1)
+2026-11-08 22:28:48,589 INFO    [cli-172.19.112.1:65243] conexão aceita (threads ativas: 2)
+2026-11-08 22:28:48,592 INFO    [cli-172.19.112.1:65244] conexão aceita (threads ativas: 3)
+2026-11-08 22:29:00,595 INFO    [cli-172.19.112.1:65243] conexão encerrada
+2026-11-08 22:29:00,595 INFO    [cli-172.19.112.1:65242] conexão encerrada
+2026-11-08 22:29:00,595 INFO    [cli-172.19.112.1:65244] conexão encerrada
+2026-11-08 22:29:14,976 INFO    [cli-172.19.112.1:65245] conexão aceita (threads ativas: 1)
+2026-11-08 22:29:14,980 INFO    [cli-172.19.112.1:65246] conexão aceita (threads ativas: 2)
+2026-11-08 22:29:14,985 INFO    [cli-172.19.112.1:65247] conexão aceita (threads ativas: 3)
+2026-11-08 22:29:26,988 INFO    [cli-172.19.112.1:65246] conexão encerrada
+2026-11-08 22:29:26,988 INFO    [cli-172.19.112.1:65247] conexão encerrada
+2026-11-08 22:29:26,989 INFO    [cli-172.19.112.1:65245] conexão encerrada

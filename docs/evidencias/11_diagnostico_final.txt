@@ -1,0 +1,130 @@
+$ sudo bash scripts/diagnostico.sh 172.28.0.21
+
+===== Host e sistema =====
+2026-11-19 09:44:07 -03
+Londero-Rz16
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+6.18.33.2-microsoft-standard-WSL2
+ 09:44:07 up 26 min,  2 users,  load average: 0.10, 0.13, 0.15
+
+===== Interfaces (ip -br addr) e rotas (ip route) =====
+lo               UNKNOWN        127.0.0.1/8 10.255.255.254/32 ::1/128 
+eth0             UP             172.19.114.51/20 
+docker0          DOWN           172.17.0.1/16 fe80::9074:f6ff:fea3:1942/64 
+br-clinica       UP             172.28.0.1/24 fe80::608e:cdff:fe9c:9f26/64 
+veth7179d6a@if2  UP             fe80::6423:55ff:fe6b:44c2/64 
+vetha445e47@if2  UP             fe80::4050:4aff:fe93:2fc2/64 
+veth7ff7b4d@if2  UP             fe80::ec2b:f8ff:fed8:9653/64 
+default via 172.19.112.1 dev eth0 proto kernel 
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown 
+172.19.112.0/20 dev eth0 proto kernel scope link src 172.19.114.51 
+172.28.0.0/24 dev br-clinica proto kernel scope link src 172.28.0.1 
+
+===== Serviço no systemd (systemctl) =====
+enabled
+● laudos.service - Central de laudos da clinica (servidor LTP/1 com TLS e painel HTTP)
+     Loaded: loaded (/etc/systemd/system/laudos.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-11-19 09:43:15 -03; 52s ago
+ Invocation: 717c6a12537e4a4c8aeedd1b5c7323ff
+       Docs: https://github.com/0Londero/transferencia-segura-laudos
+   Main PID: 7137 (python3)
+      Tasks: 2 (limit: 64)
+     Memory: 119.9M (max: 512M, available: 392M, peak: 120.3M)
+        CPU: 2.038s
+     CGroup: /system.slice/laudos.service
+             └─7137 /usr/bin/python3 /opt/laudos/src/servidor.py --dados /srv/laudos --unidades /etc/laudos/unidades.json --log /var/log/laudos/servidor.log --tls-cert /etc/laudos/tls/servidor.crt --tls-chave /etc/laudos/tls/servidor.key
+
+===== Portas em escuta: LTP/1 5050 e HTTP 8080 (ss -tlnp) =====
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                           
+LISTEN 0      64           0.0.0.0:5050      0.0.0.0:*    users:(("python3",pid=7137,fd=5))
+LISTEN 0      5            0.0.0.0:8080      0.0.0.0:*    users:(("python3",pid=7137,fd=4))
+
+===== Conexões TCP estabelecidas na porta 5050 (ss -tn) =====
+Recv-Q Send-Q Local Address:Port Peer Address:Port
+
+===== Processo do servidor: usuário, threads, memória, CPU (ps e top) =====
+    PID USER     GROUP    NLWP   RSS %CPU %MEM     ELAPSED CMD
+   7137 laudos   laudos      2 37588  3.8  0.2       00:52 /usr/bin/python3 /opt/laudos/src/servidor.py --dados /srv/laudos --unidades /etc/laudos/unidades.json --log /var/log/laudos/servidor.log --tls-cert /etc/laudos/tls/servidor.crt --tls-chave /etc/laudos/tls/servidor.key
+top - 09:44:07 up 26 min,  2 users,  load average: 0.10, 0.13, 0.15
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.0 us,  0.4 sy,  0.0 ni, 99.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+MiB Mem :  15694.2 total,  14634.8 free,    836.9 used,    430.4 buff/cache     
+MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14857.2 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+   7137 laudos    20   0 1453272  37588  14612 S   0.0   0.2   0:02.00 python3
+
+===== Firewall (ufw status verbose) =====
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+5050/tcp                   ALLOW IN    172.28.0.0/24              # LTP/1 unidades
+5050/tcp                   ALLOW IN    172.19.112.0/20            # LTP/1 TI
+8080/tcp                   ALLOW IN    172.19.112.0/20            # painel HTTP TI
+
+
+===== Unidades em contêineres (docker compose ps) =====
+NAME                  STATUS
+laudos-agua-verde-1   Up About a minute
+laudos-batel-1        Up About a minute
+laudos-centro-1       Up About a minute
+laudos-centro-1 172.28.0.21/24
+laudos-agua-verde-1 172.28.0.23/24
+laudos-batel-1 172.28.0.22/24
+
+
+===== Painel HTTP (curl /saude) =====
+{
+  "status": "ok",
+  "versao": "LTP/1",
+  "servidor": "Londero-Rz16",
+  "tls": true,
+  "uptime_s": 53
+}
+===== Alcance de 172.28.0.21 (ping) =====
+PING 172.28.0.21 (172.28.0.21) 56(84) bytes of data.
+64 bytes from 172.28.0.21: icmp_seq=1 ttl=64 time=0.106 ms
+64 bytes from 172.28.0.21: icmp_seq=2 ttl=64 time=0.110 ms
+64 bytes from 172.28.0.21: icmp_seq=3 ttl=64 time=0.078 ms
+
+--- 172.28.0.21 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 0.078/0.098/0.110/0.014 ms
+
+===== Últimas linhas do log do serviço (journalctl -u laudos) =====
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52156] agua-verde -> centro: carga-08-20261119-094328.bin gravado, SHA-256 confere (4194304 bytes, 8.4 MB/s)
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52151] conexão encerrada
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52157] conexão encerrada
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52156] conexão encerrada
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52159] agua-verde -> centro: carga-11-20261119-094328.bin gravado, SHA-256 confere (4194304 bytes, 8.5 MB/s)
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [cli-172.19.112.1:52159] conexão encerrada
+2026-11-19T09:43:46-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-6 (process_request_thread)] HTTP GET /metricas 200 de 172.19.112.1
+2026-11-19T09:43:56-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-7 (process_request_thread)] HTTP GET /saude 200 de 172.19.112.1
+2026-11-19T09:43:57-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-8 (process_request_thread)] HTTP GET /metricas 200 de 172.19.112.1
+2026-11-19T09:43:57-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-9 (process_request_thread)] HTTP GET /nao-existe 404 de 172.19.112.1
+2026-11-19T09:43:58-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-11 (process_request_thread)] HTTP GET /favicon.ico 404 de 172.19.112.1
+2026-11-19T09:44:08-03:00 Londero-Rz16 python3[7137]: INFO    [Thread-12 (process_request_thread)] HTTP GET /saude 200 de 127.0.0.1
+
+===== Permissões: configuração (/etc/laudos) e laudos (/srv/laudos) =====
+drwxr-x--- 3 root   laudos 4096 Nov 19 09:42 /etc/laudos
+drwxr-x--- 2 root   laudos 4096 Nov 19 09:26 /etc/laudos/tls
+drwxr-xr-x 2 root   root   4096 Nov 19 09:42 /opt/laudos/src
+drwxr-x--- 5 laudos laudos 4096 Nov 19 09:26 /srv/laudos
+total 16
+-rw-r--r-- 1 root laudos 721 Nov 19 09:26 ca.crt
+-rw------- 1 root laudos 241 Nov 19 09:26 ca.key
+-rw-r--r-- 1 root laudos 798 Nov 19 09:26 servidor.crt
+-rw-r----- 1 root laudos 241 Nov 19 09:26 servidor.key
+agua-verde: drwxr-x--- laudos:laudos | 14 laudos, 0 parciais
+batel: drwxr-x--- laudos:laudos | 16 laudos, 0 parciais
+centro: drwxr-x--- laudos:laudos | 18 laudos, 0 parciais
+-rw-r----- 1 laudos laudos 4194304 Nov 19 09:36 /srv/laudos/centro/entrada/carga-11-20261119-093619.bin
+-rw-r----- 1 laudos laudos      95 Nov 19 09:36 /srv/laudos/centro/entrada/carga-11-20261119-093619.bin.sha256
+
+===== Uso de disco (df -h) =====
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdd       1007G  3.5G  953G   1% /

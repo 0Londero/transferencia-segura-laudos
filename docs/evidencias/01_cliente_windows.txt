@@ -1,0 +1,45 @@
+$ python src/cliente.py --servidor 172.19.114.51 ping
+2026-11-08 22:28:27,432 INFO    conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65222)
+PONG de Londero-Rz16 (LTP/1) em 1.8 ms, hora do servidor 2026-11-08 22:28:27
+
+$ python testes/teste_checkpoint1.py --servidor 172.19.114.51
+2026-11-08 22:28:27,595 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65223)
+Cliente Londero-Rz16 -> servidor 172.19.114.51:5050
+
+[OK    ] T01 primeira comunicação (PING): PONG de Londero-Rz16 em 1.9 ms
+2026-11-08 22:28:27,657 INFO    [Thread-1 (enviar)] laudo laudo-centro-20261108-222827.bin: 20971520 bytes, SHA-256 e7e54dd51d0e51cc76072d38387f82cce357f928f64f4f08c5bed7121ee5a727
+2026-11-08 22:28:27,671 INFO    [Thread-2 (enviar)] laudo laudo-batel-20261108-222827.bin: 20971520 bytes, SHA-256 ae35d20a9ea0e8447b1a3e9ec79d6150ab4d1c667ddb22416475e4e61cfcae71
+2026-11-08 22:28:27,672 INFO    [Thread-2 (enviar)] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65225)
+2026-11-08 22:28:27,675 INFO    [Thread-1 (enviar)] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65224)
+2026-11-08 22:28:27,681 INFO    [Thread-3 (enviar)] laudo laudo-agua-verde-20261108-222827.bin: 20971520 bytes, SHA-256 cb65ee7db1208c9ba1215ff8c3148f159b5b15212d7282bb84ffa0a2884e2354
+2026-11-08 22:28:27,706 INFO    [Thread-3 (enviar)] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65226)
+2026-11-08 22:28:27,864 INFO    [Thread-2 (enviar)] servidor confirmou laudo-batel-20261108-222827.bin (SHA-256 conferido)
+2026-11-08 22:28:27,877 INFO    [Thread-1 (enviar)] servidor confirmou laudo-centro-20261108-222827.bin (SHA-256 conferido)
+2026-11-08 22:28:27,890 INFO    [Thread-3 (enviar)] servidor confirmou laudo-agua-verde-20261108-222827.bin (SHA-256 conferido)
+[OK    ] T02 3 unidades enviando 20 MB ao mesmo tempo: total 0.29s (agua-verde 0.26s, batel 0.23s, centro 0.25s)
+2026-11-08 22:28:27,918 INFO    [MainThread] laudo laudo-retomada-20261108-222827.bin: 10485760 bytes, SHA-256 8eab92b3af6ecd0113f1090fe9b48e74575a60b9fb0fa11b57cd19ee5061739f
+2026-11-08 22:28:27,920 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65227)
+2026-11-08 22:28:27,951 WARNING [MainThread] simulando queda de conexão após 4194304 bytes
+2026-11-08 22:28:27,951 WARNING [MainThread] envio interrompido (queda simulada pelo teste); tentativa 1/5
+2026-11-08 22:28:28,969 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65229)
+2026-11-08 22:28:28,973 INFO    [MainThread] servidor já tem 4194304 bytes, retomando a partir daí
+2026-11-08 22:28:29,017 INFO    [MainThread] servidor confirmou laudo-retomada-20261108-222827.bin (SHA-256 conferido)
+[OK    ] T03 queda no meio do envio e retomada: reconectou e retomou no byte 4194304 de 10485760
+2026-11-08 22:28:29,019 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65230)
+[OK    ] T04 servidor rejeita arquivo com SHA-256 divergente: HASH_DIVERGENTE (calculado a70561e94340f61f...)
+2026-11-08 22:28:29,038 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65231)
+[OK    ] T05 token inválido é recusado: AUTH_INVALIDA: unidade ou token incorretos
+2026-11-08 22:28:30,041 INFO    [MainThread] conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65232)
+[OK    ] T06 nome com ../ é recusado: NOME_INVALIDO: '../../etc/passwd'
+2026-11-08 22:28:32,090 WARNING [MainThread] tentativa 1/3 de conectar a 172.19.114.51:5051 falhou: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-11-08 22:28:35,143 WARNING [MainThread] tentativa 2/3 de conectar a 172.19.114.51:5051 falhou: [WinError 10061] No connection could be made because the target machine actively refused it
+2026-11-08 22:28:39,185 WARNING [MainThread] tentativa 3/3 de conectar a 172.19.114.51:5051 falhou: [WinError 10061] No connection could be made because the target machine actively refused it
+[OK    ] T07 servidor fora do ar: erro tratado após reconexões: ConnectionRefusedError após 3 tentativas em 9.1s
+
+7/7 testes aprovados
+
+$ LTP_TOKEN=token-centro-2026 python src/cliente.py --servidor 172.19.114.51 --unidade centro listar
+2026-11-08 22:28:39,419 INFO    conectado a 172.19.114.51:5050 (porta local 172.19.112.1:65237)
+2 laudo(s) na entrada de centro:
+  laudo-agua-verde-20261108-222827.bin         20971520 B  cb65ee7db1208c9ba1215ff8c3148f159b5b15212d7282bb84ffa0a2884e2354
+  laudo-retomada-20261108-222827.bin           10485760 B  8eab92b3af6ecd0113f1090fe9b48e74575a60b9fb0fa11b57cd19ee5061739f

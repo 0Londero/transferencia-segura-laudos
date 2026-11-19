@@ -1,0 +1,8 @@
+{
+  "_comentario": "Unidades da clínica e o SHA-256 do token de cada uma. O token em claro nunca fica no servidor. Tokens de laboratório: token-<unidade>-2026. Para gerar um novo hash: python -c \"import hashlib; print(hashlib.sha256(b'NOVO_TOKEN').hexdigest())\"",
+  "unidades": {
+    "centro": "36e021281abb8df2442e636ef80187b48fb4003288048dedf3f56f7160a6d498",
+    "batel": "f27f498f09c78f4c61e7b5eda8922283e9e047127d5c372beede314c3aafa8a5",
+    "agua-verde": "51d839639cad32f5573b7ebab98b92114450b23c415f1b604337445ec6ee6796"
+  }
+}
