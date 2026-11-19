@@ -147,9 +147,10 @@ class Cliente:
                   "tamanho": tamanho, "sha256": sha}
 
         for tentativa in range(1, self.tentativas + 1):
-            sock = self.conectar()  # já tem a própria política de reconexão
             try:
-                with sock:
+                # conectar() já tenta de novo com espera exponencial; se o servidor
+                # continuar fora do ar, este laço tenta outra rodada, como no download
+                with self.conectar() as sock:
                     resposta = self._pedir(sock, pedido)
                     if resposta["status"] == "OK":  # o servidor já tinha esse laudo
                         log.info("servidor já possui %s com o mesmo SHA-256", caminho.name)
@@ -178,7 +179,8 @@ class Cliente:
                     raise
                 log.warning("servidor ainda finaliza o envio anterior; tentativa %d/%d",
                             tentativa, self.tentativas)
-            time.sleep(min(2 ** (tentativa - 1), 16))
+            if tentativa < self.tentativas:  # depois da última, não há por que esperar
+                time.sleep(min(2 ** (tentativa - 1), 16))
         raise ConnectionError(f"não foi possível concluir o envio em {self.tentativas} tentativas")
 
     def baixar(self, nome, pasta, simular_queda=None):
@@ -212,7 +214,8 @@ class Cliente:
                     raise
                 log.warning("download interrompido (%s); tentativa %d/%d",
                             erro, tentativa, self.tentativas)
-                time.sleep(min(2 ** (tentativa - 1), 16))
+                if tentativa < self.tentativas:
+                    time.sleep(min(2 ** (tentativa - 1), 16))
                 continue
 
             calculado = p.sha256_arquivo(parcial)
