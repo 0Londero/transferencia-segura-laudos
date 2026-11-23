@@ -9,6 +9,8 @@ Tema 4 do enunciado: transferência segura de arquivos.
 
 **Equipe:** Otávio Londero, Davi Berbek e Pedro Joaquim Freire de Lima.
 
+**Vídeo de apresentação:** https://youtu.be/XPR5XRYpV-k
+
 ## Cenário
 
 Uma clínica de diagnóstico por imagem com três unidades em Curitiba (Centro, Batel e
@@ -103,10 +105,15 @@ com `ip -br addr show eth0`.
    sudo usermod -aG docker "$USER"     # vale a partir do próximo terminal
    ```
 
-3. Na pasta do projeto, instale o serviço, configure o firewall e suba as unidades:
+3. Clone o repositório e, na pasta dele, instale o serviço, configure o firewall e suba
+   as unidades. Prefira clonar numa pasta do Windows (vista no Ubuntu em `/mnt/c/...`):
+   assim o notebook da TI usa a mesma pasta e o mesmo `certs/ca.crt`, que o instalador
+   copia para lá.
 
    ```bash
-   cd /mnt/c/pjbl_con_ciber/projeto
+   cd /mnt/c/Users/<seu-usuario>         # uma pasta do Windows
+   git clone https://github.com/0Londero/transferencia-segura-laudos.git
+   cd transferencia-segura-laudos
    sudo bash scripts/instalar_servidor.sh     # usuário laudos, /srv/laudos, TLS, systemd
    sudo bash scripts/configurar_firewall.sh   # ufw
    docker compose up -d --build               # contêineres centro, batel e agua-verde
@@ -132,7 +139,7 @@ docker compose exec batel python src/cliente.py enviar /home/laudos/grande.pdf -
 `--limite` (KB/s) simula o link lento de uma unidade e deixa tempo para provocar uma
 falha no meio do envio (`sudo systemctl stop laudos` e depois `start`).
 
-No Windows (notebook da TI), na pasta `projeto`, usando o IP da `eth0` do WSL:
+No Windows (notebook da TI), na pasta do repositório, usando o IP da `eth0` do WSL:
 
 ```powershell
 python src/cliente.py --servidor 172.19.114.51 --tls-ca certs/ca.crt ping
@@ -198,7 +205,7 @@ Só biblioteca padrão do Python:
 | Biblioteca | Uso |
 |---|---|
 | `socket` | sockets TCP, `TCP_NODELAY`, `sendfile` (cópia do arquivo pelo kernel) |
-| `ssl` | TLS 1.2+ no servidor e no cliente, verificação da CA e do nome |
+| `ssl` | TLS no servidor e no cliente (versão mínima 1.2; na prática negocia o 1.3), verificação da CA e do nome |
 | `threading` | thread por cliente, `Lock`, `BoundedSemaphore`, `Event` |
 | `http.server` | painel HTTP (`ThreadingHTTPServer`) |
 | `hashlib`, `hmac` | SHA-256 dos laudos e dos tokens, comparação em tempo constante |
@@ -209,9 +216,10 @@ Só biblioteca padrão do Python:
 
 ## Segurança
 
-- **TLS 1.3** com certificado assinado pela CA da clínica; o cliente confere a CA e o
-  nome `servidor`. A captura em `docs/evidencias/09_captura_trafego.txt` mostra o token
-  e o nome da paciente legíveis sem TLS e ausentes com TLS.
+- **TLS 1.3** (negociado; o código aceita 1.2 ou mais novo) com certificado assinado
+  pela CA da clínica; o cliente confere a CA e o nome `servidor`. A captura em
+  `docs/evidencias/09_captura_trafego.txt` mostra o token e o nome da paciente
+  legíveis sem TLS e ausentes com TLS.
 - **Integridade:** SHA-256 conferido no servidor (envio) e no cliente (download).
 - **Autenticação:** token por unidade; o servidor guarda só o SHA-256 do token.
 - **Isolamento:** a pasta do download vem da sessão autenticada, nunca do pedido.
