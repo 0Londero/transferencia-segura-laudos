@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/img/pucpr.png" alt="Logo da PUCPR" width="160">
+</p>
+
 # Transferência segura de laudos (LTP/1)
 
 Projeto Final de **PSI129A, Conectividade em Sistemas Ciberfísicos** (PUCPR, 2026/2).
